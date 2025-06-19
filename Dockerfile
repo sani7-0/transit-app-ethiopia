@@ -3,15 +3,14 @@ FROM php:8.2-apache
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Install necessary PHP extensions
-RUN apt-get update && apt-get install -y libcurl4-openssl-dev \
-    && docker-php-ext-install mysqli curl json
+# Install mysqli (json and curl are built-in)
+RUN docker-php-ext-install mysqli
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy app files
+# Copy project files
 COPY . /var/www/html/
 
-# Fix permissions
+# Set proper permissions
 RUN chown -R www-data:www-data /var/www/html
