@@ -4,25 +4,17 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "sql7.freesqldatabase.com";
-$username = "sql7777349";
-$password = "8Iib6bgQeK";  // Replace this once it finishes loading
-$database = "sql7777349";
+$servername = "sql8.freesqldatabase.com";
+$username = "sql8784737";
+$password = "SNXWjH7Iih";  // Replace this once it finishes loading
+$database = "sql8784737";
 
-// Old DB connection removed
-$conn = new mysqli("sql8.freesqldatabase.com", "sql8784737", "SNXWjH7Iih", "sql8784737", 3306);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+
 // get_routes.php
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "sql7.freesqldatabase.com";
-$username = "sql7777349";
-$password = "8Iib6bgQeK";  // Replace this once it finishes loading
-$database = "sql7777349";
 
 // Old DB connection removed
 $conn = new mysqli($servername, $username, $password, $database);

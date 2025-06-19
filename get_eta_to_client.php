@@ -11,10 +11,7 @@ header('Content-Type: application/json');
 $TOMTOM_API_KEY = "TJ1OHQZFL3Gsaeg1GE0SdmB5347JETtr";
 
 // Old DB connection removed
-$conn = new mysqli("localhost", "root", "", "transit");
-if ($conn->connect_error) {
-    die(json_encode(["error" => "DB connection failed"]));
-}
+
 
 // Get latest client location
 $clientRes = $conn->query("SELECT latitude, longitude FROM client_locations ORDER BY last_updated DESC LIMIT 1");
