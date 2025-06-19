@@ -1,16 +1,17 @@
-FROM php:8.1-apache
+# Use official PHP with Apache image
+FROM php:8.2-apache
 
-# Install MySQL extensions if your PHP uses MySQL
-RUN docker-php-ext-install mysqli pdo pdo_mysql
-
-# Enable Apache rewrite module (if you need pretty URLs)
+# Enable URL rewriting
 RUN a2enmod rewrite
 
-# Copy all your project files into Apache’s web root
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy all files into web server root
 COPY . /var/www/html/
 
-# Expose port 80 for HTTP
-EXPOSE 80
+# Optional: give proper permissions
+RUN chown -R www-data:www-data /var/www/html
 
-# Start Apache in the foreground
-CMD ["apache2-foreground"]
+# Expose default port
+EXPOSE 80
