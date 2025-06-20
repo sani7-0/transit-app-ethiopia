@@ -24,6 +24,7 @@ if ($conn->connect_error) {
 }
 
 $routes = [];
+$debug_info = [];
 $routeQuery = "SELECT * FROM routes";
 $routeResult = $conn->query($routeQuery);
 
@@ -48,6 +49,7 @@ if ($routeResult && $routeResult->num_rows > 0) {
         $waypoints[] = $end;
         $coordinateStr = implode(":", $waypoints);
         $tomtom_url = "https://api.tomtom.com/routing/1/calculateRoute/$coordinateStr/json?key=$TOMTOM_API_KEY";
+        $debug_info[] = ["route_id" => $routeId, "url" => $tomtom_url];
 
         $coordinates = [];
         try {
@@ -63,9 +65,11 @@ if ($routeResult && $routeResult->num_rows > 0) {
                 }
             } else {
                 log_error("TomTom response missing for route $routeId");
+                $debug_info[] = ["route_id" => $routeId, "error" => "Missing points in TomTom response"];
             }
         } catch (Exception $e) {
             log_error("TomTom fetch failed for route $routeId: " . $e->getMessage());
+            $debug_info[] = ["route_id" => $routeId, "exception" => $e->getMessage()];
         }
 
         $routes[] = [
@@ -79,5 +83,9 @@ if ($routeResult && $routeResult->num_rows > 0) {
 }
 
 $conn->close();
-echo json_encode($routes);
+echo json_encode([
+    "routes" => $routes,
+    "debug" => $debug_info,
+    "log" => @file_get_contents("error_log.txt")
+]);
 ?>
