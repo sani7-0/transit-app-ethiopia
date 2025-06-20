@@ -4,28 +4,17 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Remote database credentials (update if needed)
+// ✅ Correct DB credentials
 $servername = "sql8.freesqldatabase.com";
-$username = "sql8784737";
-$password = "SNXWjH7Iih";  // Replace this once it finishes loading
-$database = "sql8784737";
+$username   = "sql8784737";
+$password   = "SNXWjH7Iih";
+$database   = "sql8784737";
 
 // Connect to MySQL
-// Old DB connection removed
-
-
-// get_locations.php
-header('Content-Type: application/json');
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-
-
-// Connect to MySQL
-// Old DB connection removed
 $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
-    die(json_encode(["error" => "❌ Connection failed: " . $conn->connect_error]));
+    echo json_encode(["error" => "❌ Connection failed: " . $conn->connect_error]);
+    exit;
 }
 
 // Get drivers updated in the last 2 minutes
@@ -43,7 +32,8 @@ $sql = "
 
 $result = $conn->query($sql);
 if (!$result) {
-    die(json_encode(["error" => "❌ Query failed: " . $conn->error]));
+    echo json_encode(["error" => "❌ Query failed: " . $conn->error]);
+    exit;
 }
 
 $locations = [];
@@ -52,13 +42,13 @@ while ($row = $result->fetch_assoc()) {
         'user_id'      => (int)$row['driver_id'],
         'latitude'     => (float)$row['latitude'],
         'longitude'    => (float)$row['longitude'],
-        'last_updated' => $row['last_updated'], // <-- Needed for JS filtering
+        'last_updated' => $row['last_updated'],
         'route'        => $row['route'],
         'route_name'   => $row['route_name'],
         'route_color'  => $row['route_color']
     ];
 }
 
-echo json_encode($locations);
 $conn->close();
+echo json_encode($locations);
 ?>
