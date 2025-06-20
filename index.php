@@ -190,6 +190,7 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                driver_id: driverId,
               latitude: pos.coords.latitude,
               longitude: pos.coords.longitude
             })
