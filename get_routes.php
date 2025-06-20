@@ -83,9 +83,6 @@ if ($routeResult && $routeResult->num_rows > 0) {
 }
 
 $conn->close();
-echo json_encode([
-    "routes" => $routes,
-    "debug" => $debug_info,
-    "log" => @file_get_contents("error_log.txt")
-]);
+echo json_encode($routes);
+
 ?>
