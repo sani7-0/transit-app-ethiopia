@@ -28,14 +28,14 @@ while ($route = $result->fetch_assoc()) {
     $routeId = $route['id'];
 
     // Fetch stops
-    //$stops = [];
-    //$stopQuery = "SELECT name, latitude AS lat, longitude AS lng FROM stops WHERE route_id = $routeId ORDER BY stop_order ASC";
-    //$stopResult = $conn->query($stopQuery);
-    //if ($stopResult && $stopResult->num_rows > 0) {
-      //  while ($stop = $stopResult->fetch_assoc()) {
-        //    $stops[] = $stop;
-        //}
-    //}
+    $stops = [];
+    $stopQuery = "SELECT name, latitude AS lat, longitude AS lng FROM stops WHERE route_id = $routeId ORDER BY stop_order ASC";
+    $stopResult = $conn->query($stopQuery);
+    if ($stopResult && $stopResult->num_rows > 0) {
+        while ($stop = $stopResult->fetch_assoc()) {
+            $stops[] = $stop;
+        }
+    }
 
     // Prepare waypoints
     $waypoints = [];
