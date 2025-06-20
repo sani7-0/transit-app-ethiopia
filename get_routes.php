@@ -1,25 +1,16 @@
 <?php
-// get_routes.php
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $servername = "sql8.freesqldatabase.com";
-$username = "sql8784737";
-$password = "SNXWjH7Iih";  // Replace this once it finishes loading
-$database = "sql8784737";
-
-
-// get_routes.php
-header('Content-Type: application/json');
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-
-// Old DB connection removed
+$username   = "sql8784737";
+$password   = "SNXWjH7Iih";
+$database   = "sql8784737";
 $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
-    die(json_encode(["error" => "DB connection failed: " . $conn->connect_error]));
+    echo json_encode(["error" => "❌ DB connection failed: " . $conn->connect_error]);
+    exit;
 }
 
 $TOMTOM_API_KEY = "TJ1OHQZFL3Gsaeg1GE0SdmB5347JETtr";
@@ -27,7 +18,8 @@ $TOMTOM_API_KEY = "TJ1OHQZFL3Gsaeg1GE0SdmB5347JETtr";
 $sql = "SELECT * FROM routes";
 $result = $conn->query($sql);
 if (!$result) {
-    die(json_encode(["error" => "Query failed: " . $conn->error]));
+    echo json_encode(["error" => "❌ Query failed: " . $conn->error]);
+    exit;
 }
 
 $routes = [];
@@ -48,64 +40,58 @@ while ($route = $result->fetch_assoc()) {
     // Prepare waypoints
     $waypoints = [];
 
-    // Add starting point
     if (!empty($route['start_lat']) && !empty($route['start_lng'])) {
         $waypoints[] = "{$route['start_lat']},{$route['start_lng']}";
     }
 
-    // Add all stops
     foreach ($stops as $stop) {
         $waypoints[] = "{$stop['lat']},{$stop['lng']}";
     }
 
-    // Add ending point
     if (!empty($route['end_lat']) && !empty($route['end_lng'])) {
         $waypoints[] = "{$route['end_lat']},{$route['end_lng']}";
     }
 
     $coordinates = [];
 
-    // Snap to road using TomTom
     if (count($waypoints) > 1) {
         $coordinateStr = implode(":", $waypoints);
         $tomtom_url = "https://api.tomtom.com/routing/1/calculateRoute/$coordinateStr/json?key=$TOMTOM_API_KEY";
 
-        $response = @file_get_contents($tomtom_url);
-        if ($response !== false) {
+        // ✅ Use cURL instead of file_get_contents
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $tomtom_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && $response !== false) {
             $data = json_decode($response, true);
             if (isset($data['routes'][0]['legs'])) {
                 foreach ($data['routes'][0]['legs'] as $leg) {
-                    if (isset($leg['points'])) {
-                        foreach ($leg['points'] as $point) {
-                            $coordinates[] = [
-                                'lat' => $point['latitude'],
-                                'lng' => $point['longitude']
-                            ];
-                        }
+                    foreach ($leg['points'] as $point) {
+                        $coordinates[] = [
+                            'lat' => $point['latitude'],
+                            'lng' => $point['longitude']
+                        ];
                     }
                 }
-            } else {
-                error_log("❌ No route legs found for route $routeId");
             }
         } else {
-            error_log("❌ Failed to fetch route $routeId from TomTom API");
+            error_log("❌ TomTom API failed for route $routeId. HTTP $httpCode");
         }
     }
 
     $routes[] = [
-        'id' => $routeId,
-        'route_name' => $route['route_name'],
+        'id'          => $routeId,
+        'route_name'  => $route['route_name'],
         'route_color' => $route['route_color'] ?? '#007bff',
         'coordinates' => $coordinates,
-        'stops' => $stops
+        'stops'       => $stops
     ];
 }
-// right after you build $routes[] but before echo:
-    file_put_contents('debug_routes.json', json_encode($routes, JSON_PRETTY_PRINT));
-    
-    
+
+file_put_contents('debug_routes.json', json_encode($routes, JSON_PRETTY_PRINT));
 $conn->close();
 echo json_encode($routes);
-?>
-
-
