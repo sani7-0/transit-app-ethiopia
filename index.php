@@ -15,44 +15,16 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
     <title>Real-Time Location Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="manifest" href="/manifest.json">
-
     <style>
-        body, html { 
-            background: cornflowerblue;
-            font-family: sans-serif;
-        }
-        .header {
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .header h1 {
-            color: #fff;
-            font-size: 1.8rem;
-            margin: 0;
-            font-weight: bold;
-        }
-        .coordinates {
-            color: #fff;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-        #map { 
-            height: 70vh; 
-            width: 90%; 
-            margin: 0 auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px #ddd;
-        }
+        body, html { background: cornflowerblue; font-family: sans-serif; }
+        .header { padding: 1.5rem; text-align: center; }
+        .header h1 { color: #fff; font-size: 1.8rem; margin: 0; font-weight: bold; }
+        .coordinates { color: #fff; font-size: 0.9rem; margin-top: 0.5rem; }
+        #map { height: 70vh; width: 90%; margin: 0 auto; border-radius: 10px; box-shadow: 0 5px 10px #ddd; }
         .logout-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 8px 15px;
-            background: red;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
+            position: absolute; top: 15px; right: 15px;
+            padding: 8px 15px; background: red; color: white;
+            text-decoration: none; border-radius: 5px; font-weight: bold;
         }
     </style>
 </head>
@@ -66,14 +38,12 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js");
-  }
-</script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js");
+        }
 
-    <script>
         let map, marker, lastLat = null, lastLng = null;
-        const driverId = <?php echo $driver_id; ?>; // Get driver ID dynamically
+        const driverId = <?php echo $driver_id; ?>;
 
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(updateLocation, handleError, { enableHighAccuracy: true });
@@ -82,8 +52,8 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
         }
 
         function updateLocation(position) {
-            let lat = position.coords.latitude;
-            let lng = position.coords.longitude;
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
             document.getElementById('coordinates').textContent = `${lat.toFixed(6)}°, ${lng.toFixed(6)}°`;
 
             if (!map) {
@@ -96,32 +66,29 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
 
             if (lastLat !== null && lastLng !== null) {
                 let distance = getDistanceFromLatLonInMeters(lastLat, lastLng, lat, lng);
-                if (distance < 5) return; // Ignore small movements
+                if (distance < 5) return;
             }
 
             lastLat = lat;
             lastLng = lng;
 
-            sendLocationToServer(driverId, lat, lng);
+            sendLocationToServer(lat, lng);
         }
 
         function handleError(error) {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    alert("❌ Location access denied.");
-                    break;
+                    alert("❌ Location access denied."); break;
                 case error.POSITION_UNAVAILABLE:
-                    alert("⚠️ Location unavailable.");
-                    break;
+                    alert("⚠️ Location unavailable."); break;
                 case error.TIMEOUT:
-                    alert("⌛ Location request timed out.");
-                    break;
+                    alert("⌛ Location request timed out."); break;
                 default:
                     alert("❗ Unknown location error.");
             }
         }
 
-        function sendLocationToServer(driverId, lat, lng) {
+        function sendLocationToServer(lat, lng) {
             fetch('update_location.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -137,7 +104,7 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
                     console.error("❌ Server Error:", data.error);
                     alert(data.error);
                 } else {
-                    console.log("✅ Success:", data.success);
+                    console.log("✅ Location update:", data.success);
                 }
             })
             .catch(error => {
@@ -151,8 +118,8 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
                 .then(response => response.json())
                 .then(data => {
                     if (data.latitude && data.longitude) {
-                        let lat = parseFloat(data.latitude);
-                        let lng = parseFloat(data.longitude);
+                        const lat = parseFloat(data.latitude);
+                        const lng = parseFloat(data.longitude);
                         if (marker) {
                             marker.setLatLng([lat, lng]);
                         } else {
@@ -175,32 +142,22 @@ $driver_id = $_SESSION['driver_id']; // Get driver ID from session
             const Δφ = (lat2 - lat1) * Math.PI / 180;
             const Δλ = (lon2 - lon1) * Math.PI / 180;
 
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            const a = Math.sin(Δφ / 2) ** 2 +
                       Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                      Math.sin(Δλ / 2) ** 2;
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
             return R * c;
         }
 
         function sendHeartbeat() {
-        if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition(pos => {
-          fetch('update_location.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                driver_id: driverId,
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude
-            })
-          });
-        });
-      }
-      // send immediately, then every 60 000 ms
-      sendHeartbeat();
-      setInterval(sendHeartbeat, 60000);
-      
+            if (!navigator.geolocation) return;
+            navigator.geolocation.getCurrentPosition(pos => {
+                sendLocationToServer(pos.coords.latitude, pos.coords.longitude);
+            });
+        }
+
+        sendHeartbeat();
+        setInterval(sendHeartbeat, 60000);
     </script>
 </body>
 </html>
