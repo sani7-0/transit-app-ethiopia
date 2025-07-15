@@ -1,8 +1,8 @@
 <?php
 $servername = "sql8.freesqldatabase.com";
-$username = "sql8784737";
-$password = "SNXWjH7Iih";  // Replace this once it finishes loading
-$database = "sql8784737";
+$username = "sql8790059";
+$password = "5XsJgXV3Xf";  // Replace this once it finishes loading
+$database = "sql8790059";
 
 // Old DB connection removed
 

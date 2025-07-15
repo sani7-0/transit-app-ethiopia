@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 
 
 // Old DB connection removed
-$conn = new mysqli("sql8.freesqldatabase.com", "sql8784737", "SNXWjH7Iih", "sql8784737", 3306);
+$conn = new mysqli("sql8.freesqldatabase.com", "sql8790059", "5XsJgXV3Xf", "sql8790059", 3306);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

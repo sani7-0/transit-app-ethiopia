@@ -6,9 +6,9 @@ ini_set('display_errors', 1);
 
 // ✅ Correct DB credentials
 $servername = "sql8.freesqldatabase.com";
-$username   = "sql8784737";
-$password   = "SNXWjH7Iih";
-$database   = "sql8784737";
+$username   = "sql8790059";
+$password   = "5XsJgXV3Xf";
+$database   = "sql8790059";
 
 // Connect to MySQL
 $conn = new mysqli($servername, $username, $password, $database);

@@ -11,9 +11,9 @@ function log_error($message) {
 
 // DB credentials
 $servername = "sql8.freesqldatabase.com";
-$username = "sql8784737";
-$password = "SNXWjH7Iih";
-$database = "sql8784737";
+$username = "sql8790059";
+$password = "5XsJgXV3Xf";
+$database = "sql8790059";
 $TOMTOM_API_KEY = "TJ1OHQZFL3Gsaeg1GE0SdmB5347JETtr";
 
 $conn = new mysqli($servername, $username, $password, $database, 3306);

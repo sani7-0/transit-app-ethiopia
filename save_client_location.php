@@ -4,9 +4,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $servername = "sql8.freesqldatabase.com";
-$username = "sql8784737";
-$password = "SNXWjH7Iih";  // Replace this once it finishes loading
-$database = "sql8784737";
+$username = "sql8790059";
+$password = "5XsJgXV3Xf";  // Replace this once it finishes loading
+$database = "sql8790059";
 header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

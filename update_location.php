@@ -25,9 +25,9 @@ $now = date('Y-m-d H:i:s');  // ✅ Local Ethiopia time
 
 // DB config
 $host     = 'sql8.freesqldatabase.com';
-$dbname   = 'sql8784737';
-$username = 'sql8784737';
-$password = 'SNXWjH7Iih';
+$dbname   = 'sql8790059';
+$username = 'sql8790059';
+$password = '5XsJgXV3Xf';
 $port     = 3306;
 
 $conn = new mysqli($host, $username, $password, $dbname, $port);
